@@ -1,0 +1,192 @@
+/* CS Study Planner — หน้าตาเว็บ
+ * ต้นทาง: docs/prototype/cs-roadmap.html (ซึ่งถอดสีกล่องมาจากผังของภาค docs/reference/cs66-dependency-single-coop.png)
+ * ฟอนต์: หัวข้อ Kanit (ไม่มีหัว ใช้เฉพาะหัวข้อ/ตัวเลขเด่น) · เนื้อหา Anuphan (มีหัว อ่านง่ายตอนตัวเล็ก)
+ *        ตัวอักษรละตินในผังใช้ IBM Plex Sans เหมือนต้นแบบ ส่วน glyph ไทยในผังตกไปที่ Anuphan เอง
+ * ตัดสินแล้ว: แน่นข้อมูล → มุมเล็ก (radius 0.5rem) · เส้นขนแมวแทนเงา · พื้นทึบ ไม่มีกระจก/gradient
+ *   สีเน้นเดียวคือน้ำเงิน "กำลังเรียน" (--status-now) ใช้เป็น primary ด้วย
+ *   สีหมวดวิชาต้องตรงกับผังของภาค ห้ามปรับให้ "สวยขึ้น" เพราะนิสิตเทียบกับผังจริง
+ * สีสัน: แต่ละชั้นปีมีสีประจำ (--year-N) ใช้กับแถบพื้นหลังผังและแถบความคืบหน้าเท่านั้น สีกล่องยังเป็นสีหมวดตามผังของภาค
+ * dark mode: ปุ่มสลับ 3 โหมด (ตามเครื่อง/สว่าง/มืด) ตั้ง data-theme บน <html> ส่วน "ตามเครื่อง" คือไม่มี data-theme
+ *   สีทุกตัวเขียนเป็น light-dark(สว่าง, มืด) คู่กันบรรทัดเดียว แล้วให้ color-scheme ตัดสินว่าใช้ฝั่งไหน
+ */
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* dark: ใช้ได้ทั้งตอนเลือกมืดเอง และตอนตามเครื่องที่เครื่องเป็นโหมดมืด (เลือกสว่างเองแล้วห้ามมืด) */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme]) *) {
+      @slot;
+    }
+  }
+}
+
+:root {
+  color-scheme: light dark;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* ---------- ชั้นที่ 1: พาเลตต์ (ค่าจากต้นแบบ แปลงเป็น oklch) — light-dark(สว่าง, มืด) ---------- */
+:root {
+  --paper: light-dark(oklch(0.988 0.001 0), oklch(0.193 0.008 285.6));
+  --ink: light-dark(oklch(0.225 0.01 294.8), oklch(0.943 0.008 293.9));
+  --ink-soft: light-dark(oklch(0.523 0.019 293.4), oklch(0.706 0.022 292));
+  --hairline: light-dark(oklch(0.915 0.008 293.9), oklch(0.302 0.016 290.5));
+  --edge: light-dark(oklch(0.353 0.014 291.4), oklch(0.785 0.018 293));
+  --band: light-dark(oklch(0.963 0.012 259.8), oklch(0.253 0.034 264.7));
+  --raised: light-dark(oklch(1 0 0), oklch(0.226 0.01 288));
+
+  /* สีกล่องตามหมวด: พื้น / เส้นขอบ */
+  --cat-core: light-dark(oklch(1 0 0), oklch(0.239 0.013 291.9));
+  --cat-core-stroke: light-dark(oklch(0.285 0.013 292.1), oklch(0.835 0.017 293.7));
+  --cat-sci: light-dark(oklch(0.962 0.051 91.4), oklch(0.319 0.041 92.2));
+  --cat-sci-stroke: light-dark(oklch(0.785 0.121 91), oklch(0.745 0.119 90.6));
+  --cat-eng: light-dark(oklch(0.927 0.031 257.2), oklch(0.287 0.043 258.3));
+  --cat-eng-stroke: light-dark(oklch(0.641 0.083 257.5), oklch(0.697 0.088 258.5));
+  --cat-elective: light-dark(oklch(0.939 0.044 68.4), oklch(0.302 0.045 68.8));
+  --cat-elective-stroke: light-dark(oklch(0.728 0.15 80.8), oklch(0.754 0.137 76.3));
+  --cat-gened: light-dark(oklch(0.911 0.034 143.9), oklch(0.298 0.043 145.6));
+  --cat-gened-stroke: light-dark(oklch(0.713 0.118 135), oklch(0.751 0.126 134.5));
+  --cat-free: light-dark(oklch(0.888 0.028 314.7), oklch(0.28 0.035 309.5));
+  --cat-free-stroke: light-dark(oklch(0.608 0.085 314.9), oklch(0.713 0.079 313.2));
+  --cat-coop: light-dark(oklch(0.825 0.022 241.4), oklch(0.341 0.032 245.4));
+  --cat-coop-stroke: light-dark(oklch(0.373 0.058 243.1), oklch(0.779 0.045 243.1));
+  /* วิชาโทและวิชาเกียรตินิยมใช้แดงชมพูเดียวกันตามผังของภาค (คนละแผน ไม่เคยอยู่ในผังเดียวกัน) */
+  --cat-minor: light-dark(oklch(0.887 0.048 21.3), oklch(0.288 0.042 15.2));
+  --cat-minor-stroke: light-dark(oklch(0.571 0.131 24.4), oklch(0.722 0.106 23.6));
+  --cat-honors: var(--cat-minor);
+  --cat-honors-stroke: var(--cat-minor-stroke);
+
+  /* สีประจำชั้นปี: แถบพื้นหลังผัง + แถบความคืบหน้า — wash ต้องจางมากให้สีกล่องหมวดวิชายังอ่านออก
+   * hue เลี่ยงชนสีหมวด: ปี 1 ฟ้า 235 / ปี 2 เขียวอมฟ้า 175 / ปี 3 อำพัน 75 / ปี 4 ม่วง 305 */
+  --year-1: light-dark(oklch(0.56 0.12 235), oklch(0.78 0.1 235));
+  --year-1-wash: light-dark(oklch(0.972 0.016 235), oklch(0.235 0.022 235));
+  --year-2: light-dark(oklch(0.56 0.1 175), oklch(0.78 0.09 175));
+  --year-2-wash: light-dark(oklch(0.972 0.016 175), oklch(0.235 0.02 175));
+  --year-3: light-dark(oklch(0.6 0.13 70), oklch(0.8 0.12 75));
+  --year-3-wash: light-dark(oklch(0.975 0.02 80), oklch(0.24 0.025 75));
+  --year-4: light-dark(oklch(0.55 0.14 305), oklch(0.78 0.1 305));
+  --year-4-wash: light-dark(oklch(0.972 0.016 305), oklch(0.235 0.025 305));
+
+  /* สถานะของนิสิต ใช้กับกรอบและป้าย ไม่ทับสีหมวด */
+  --status-pass: light-dark(oklch(0.547 0.11 160), oklch(0.739 0.134 159.5));
+  --status-now: light-dark(oklch(0.519 0.171 261.7), oklch(0.726 0.125 261.5));
+  --status-warn: light-dark(oklch(0.553 0.174 38.4), oklch(0.728 0.155 51.5));
+  --on-status: light-dark(oklch(1 0 0), oklch(0.193 0.008 285.6));
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --dur-fast: 0.15s;
+  --dur-med: 0.28s;
+}
+
+/* ---------- ชั้นที่ 2: token ของ shadcn ผูกกลับเข้าพาเลตต์ ---------- */
+:root {
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--raised);
+  --card-foreground: var(--ink);
+  --popover: var(--raised);
+  --popover-foreground: var(--ink);
+  --primary: var(--status-now);
+  --primary-foreground: var(--on-status);
+  --secondary: var(--band);
+  --secondary-foreground: var(--ink);
+  --muted: var(--band);
+  --muted-foreground: var(--ink-soft);
+  --accent: var(--band);
+  --accent-foreground: var(--ink);
+  --destructive: var(--status-warn);
+  --border: var(--hairline);
+  --input: var(--hairline);
+  --ring: var(--status-now);
+  --radius: 0.5rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-pass: var(--status-pass);
+  --color-now: var(--status-now);
+  --color-warn: var(--status-warn);
+  --color-on-status: var(--on-status);
+
+  /* ละตินมาก่อนในผัง เพื่อให้รหัสวิชา/ตัวเลขเป็น Plex ส่วนไทยตกไปที่ Anuphan */
+  --font-sans: var(--font-anuphan), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-kanit), var(--font-anuphan), ui-sans-serif, sans-serif;
+  --font-chart: var(--font-plex), var(--font-anuphan), ui-sans-serif, sans-serif;
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+  }
+  body {
+    @apply bg-background text-foreground leading-relaxed;
+  }
+}
+
+/* ---------- ผัง (SVG) ----------
+ * ไฮไลต์สายวิชาใช้ selector ข้ามกลุ่ม (จางทุกอย่างที่ไม่ใช่สาย) ซึ่งเขียนเป็น utility ไม่ได้ จึงรวมไว้ที่นี่ที่เดียว */
+@layer components {
+  .roadmap .rm-edge,
+  .roadmap .rm-node {
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+  .roadmap[data-dim] .rm-node:not([data-hl]),
+  .roadmap[data-dim] .rm-edge:not([data-hl]) {
+    opacity: 0.18;
+  }
+  /* เส้นในสายที่ไฮไลต์เด่นขึ้นด้วยสีและความหนา (หัวลูกศรตามสีเส้นผ่าน context-stroke) — ไล่สายได้แม้เส้นตัดกัน */
+  .roadmap[data-dim] .rm-edge[data-hl] {
+    stroke: var(--status-now);
+    stroke-width: 2;
+  }
+  .roadmap .rm-node:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .roadmap .rm-edge,
+    .roadmap .rm-node {
+      transition: none;
+    }
+  }
+}

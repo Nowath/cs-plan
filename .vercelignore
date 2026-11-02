@@ -1,0 +1,3 @@
+# ไม่ต้องอัปโหลดตอน deploy ด้วย CLI — แอปไม่ได้ใช้
+docs/
+.playwright-mcp/

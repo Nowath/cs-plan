@@ -1,0 +1,312 @@
+<title>เส้นทางวิทย์คอมฯ 68</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600;700&family=Noto+Sans+Thai:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: ผัง course dependency แบบเดียวกับของภาค (คอลัมน์ = เทอม, กล่อง = วิชา, ลูกศร = prerequisite) ซ้อนสถานะของเราไว้บนกล่อง */
+:root {
+  --bg: #fbfbfc; --ink: #1c1b20; --muted: #6a6874; --line: #e3e2e8;
+  --edge: #3b3a42; --band: #eef3fb;
+  --core: #ffffff;  --core-s: #2a2930;
+  --sci: #fff2cc;   --sci-s: #d6b656;
+  --eng: #dae8fc;   --eng-s: #6c8ebf;
+  --elec: #ffe6cc;  --elec-s: #d79b00;
+  --gen: #d5e8d4;   --gen-s: #82b366;
+  --free: #e1d5e7;  --free-s: #9673a6;
+  --coop: #bac8d3;  --coop-s: #23445d;
+  --pass: #23845a; --now: #2c62c9; --warn: #c2410c; --on-badge: #ffffff;
+  --f-display: "Bai Jamjuree", "Noto Sans Thai", system-ui, sans-serif;
+  --f-body: "Noto Sans Thai", system-ui, sans-serif;
+  --f-chart: "IBM Plex Sans", "Noto Sans Thai", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #141418; --ink: #ecebf1; --muted: #a09ead; --line: #2e2d36; --edge: #b9b7c4; --band: #1a2233;
+  --core: #1f1e25; --core-s: #c9c7d3; --sci: #3a3219; --sci-s: #c9a94a; --eng: #1d2b40; --eng-s: #7c9fd4;
+  --elec: #3d2a14; --elec-s: #e0a23a; --gen: #1f3320; --gen-s: #8cc06c; --free: #2e2436; --free-s: #b494c6;
+  --coop: #2a3a48; --coop-s: #9fbbd2; --pass: #4fc48c; --now: #7aa6f5; --warn: #f2873f; --on-badge: #141418;
+  color-scheme: dark;
+}}
+:root[data-theme="dark"] {
+  --bg: #141418; --ink: #ecebf1; --muted: #a09ead; --line: #2e2d36; --edge: #b9b7c4; --band: #1a2233;
+  --core: #1f1e25; --core-s: #c9c7d3; --sci: #3a3219; --sci-s: #c9a94a; --eng: #1d2b40; --eng-s: #7c9fd4;
+  --elec: #3d2a14; --elec-s: #e0a23a; --gen: #1f3320; --gen-s: #8cc06c; --free: #2e2436; --free-s: #b494c6;
+  --coop: #2a3a48; --coop-s: #9fbbd2; --pass: #4fc48c; --now: #7aa6f5; --warn: #f2873f; --on-badge: #141418;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.6;
+  padding-block: 28px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1680px; margin: 0 auto; display: grid; gap: 28px; }
+h1, h2 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.25; }
+h1 { font-size: clamp(24px, 3.4vw, 34px); font-weight: 700; }
+h2 { font-size: 20px; font-weight: 600; }
+.eyebrow { font-size: 12.5px; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+.top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 18px 40px; align-items: end; }
+.stats { display: flex; flex-wrap: wrap; gap: 28px; }
+.stat b { display: block; font-family: var(--f-display); font-size: 26px; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 13px; color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 13px; color: var(--muted); align-items: center; }
+.sw { display: inline-block; width: 18px; height: 12px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; border: 1px solid; }
+.chartbox { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); }
+svg { display: block; font-family: var(--f-chart); }
+.hint { font-size: 13px; color: var(--muted); margin: 0; }
+.notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.notes > div { display: grid; gap: 6px; align-content: start; border-top: 3px solid var(--line); padding-top: 12px; }
+.notes .w { border-top-color: var(--warn); }
+.notes .n { border-top-color: var(--now); }
+.notes .p { border-top-color: var(--pass); }
+.notes b { font-family: var(--f-display); font-weight: 600; font-size: 16px; }
+.notes p { margin: 0; color: var(--muted); font-size: 14px; }
+.foot { font-size: 12.5px; color: var(--muted); }
+@media (max-width: 760px) { .notes { grid-template-columns: 1fr; } }
+
+/* svg parts */
+.edge { fill: none; stroke: var(--edge); stroke-width: 1.4; transition: opacity .15s; }
+.edge.co { stroke-dasharray: 5 4; }
+.arrowhead { fill: var(--edge); }
+.node rect.box { stroke-width: 1.4; }
+.node text { fill: var(--ink); font-size: 13px; }
+.node .code { font-weight: 600; }
+.node { cursor: default; transition: opacity .15s; }
+.hdr { fill: var(--ink); font-size: 14px; }
+.hdr.cr { fill: var(--muted); font-size: 13px; }
+.hdr.now { fill: var(--now); font-weight: 600; }
+.band { fill: var(--band); }
+.badge rect { stroke: none; }
+.badge text { fill: var(--on-badge); font-size: 11px; font-weight: 600; }
+.dim .node:not(.hl), .dim .edge:not(.hl) { opacity: .18; }
+@media (prefers-reduced-motion: reduce) { .edge, .node { transition: none; } }
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <div>
+      <div class="eyebrow">CS-66 COURSE DEPENDENCY · SINGLE MAJOR / COOPED · รหัส 68</div>
+      <h1>แผนเรียนวิทย์คอมฯ แบบสหกิจ</h1>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>34 / 136</b><span>หน่วยกิตที่ผ่านแล้ว</span></div>
+      <div class="stat"><b>3.16</b><span>GPAX หลังปี 1</span></div>
+      <div class="stat"><b>ปี 3 ซัมเมอร์</b><span>เริ่มออกสหกิจ</span></div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span><span class="sw" style="background:var(--core);border-color:var(--core-s)"></span>วิชาเอก</span>
+    <span><span class="sw" style="background:var(--sci);border-color:var(--sci-s)"></span>วิทย์พื้นฐาน</span>
+    <span><span class="sw" style="background:var(--eng);border-color:var(--eng-s)"></span>ภาษาอังกฤษ</span>
+    <span><span class="sw" style="background:var(--elec);border-color:var(--elec-s)"></span>วิชาเลือกเอก</span>
+    <span><span class="sw" style="background:var(--gen);border-color:var(--gen-s)"></span>Gen Ed</span>
+    <span><span class="sw" style="background:var(--free);border-color:var(--free-s)"></span>เลือกเสรี</span>
+    <span><span class="sw" style="background:var(--coop);border-color:var(--coop-s)"></span>สหกิจ</span>
+    <span>│</span>
+    <span><span class="sw" style="background:var(--pass);border-color:var(--pass)"></span>ผ่านแล้ว + เกรด</span>
+    <span><span class="sw" style="border:2.5px solid var(--now)"></span>กำลังเรียน</span>
+    <span><span class="sw" style="border:2px dashed var(--now)"></span>จะลงเทอมหน้า (2569/2)</span>
+    <span><span class="sw" style="border:2.5px solid var(--warn)"></span>ค้าง ต้องลงเพิ่ม</span>
+    <span>─▶ prerequisite &nbsp; ┄▶ corequisite</span>
+  </div>
+
+  <div class="chartbox"><svg id="chart" role="img" aria-label="ผังวิชาตามเทอม พร้อมลูกศร prerequisite และสถานะการเรียน"></svg></div>
+  <p class="hint">ชี้หรือแตะที่กล่องวิชาเพื่อดูวิชาที่ต้องผ่านก่อนและวิชาที่ต่อจากมัน บนมือถือเลื่อนผังไปทางซ้ายขวาได้</p>
+
+  <div class="notes">
+    <div class="w"><b>Calculus II ยังค้างอยู่</b><p>ตามแผนต้องเรียนปี 1 เทอม 2 แต่เทอมนั้นคุณลง Calc I ใหม่ ผมจัดไว้ที่ภาคฤดูร้อนปี 2 ได้เพราะไม่มีวิชาไหนต้องรอ Calc II แต่ห้ามเลื่อนไปซัมเมอร์ปี 3 เพราะช่วงนั้นออกสหกิจแล้ว ถ้าซัมเมอร์ไม่เปิดสอน ให้ลงปี 4 เทอม 2 ซึ่งมีแค่ 10 หน่วยกิต</p></div>
+    <div class="n"><b>สหกิจเริ่มเร็วกว่าที่คิด</b><p>2301498 CoOp Ed (6) เริ่มตั้งแต่ซัมเมอร์ปี 3 ต่อเนื่องถึงปี 4 เทอม 1 และต้องผ่าน 2300398 Pre-CoOp Ed ในปี 3 เทอม 2 ก่อน ดังนั้นวิชาเลือก I–VII ต้องเรียนให้จบภายในปี 3</p></div>
+    <div class="p"><b>ปี 3 เทอม 1 สำคัญที่สุด</b><p>SE ต้องผ่าน Database ก่อน และ OS ต้องผ่าน DSA กับ Comp Sys ก่อน ถ้าตกวิชาไหนในปี 2 ปี 3 จะเลื่อนทั้งแถว แล้วชนกับช่วงสหกิจ</p></div>
+  </div>
+
+  <p class="foot">โครงจากผัง CS-66-course-dependency (09-01-2026, เอกเดี่ยว-สหกิจ) ที่คุณดาวน์โหลดมา สถานะจากใบเกรดปี 1 และวิชาเทอมนี้จากใบลงทะเบียน 2569/1 (21 หน่วยกิต) ผมนับ 2301251 Req Eng เป็นวิชาเลือกเอก I ที่ลงล่วงหน้า เลยย้าย Free I ไปไว้ปี 2 เทอม 2 แทน ส่วน 3200106 กับ 0299006 นับเป็น Gen Ed I–II เทอม 2569/2 นับ 2309202 เป็น Free I และ 2301350 UI Design เป็นวิชาเลือกเอก II เลยย้าย Gen Ed III ไปปี 3 เทอม 1 การนับหมวดทั้งหมดนี้ต้องเช็กกับภาคอีกครั้ง</p>
+</div>
+
+<script>
+(function () {
+  const COLS = [
+    { y: "Year 1 / Sem 1", cr: "18 credits · ได้จริง 15" },
+    { y: "Year 1 / Sem 2", cr: "19 credits · ได้จริง 19" },
+    { y: "Year 2 / Sem 1", cr: "21 credits", now: true },
+    { y: "Year 2 / Sem 2", cr: "21 credits · ลงไว้ 21" },
+    { y: "Year 2 / Summer", cr: "+3 (ของค้าง)" },
+    { y: "Year 3 / Sem 1", cr: "21 credits" },
+    { y: "Year 3 / Sem 2", cr: "20 credits" },
+    { y: "Year 3 / Summer", cr: "" },
+    { y: "Year 4 / Sem 1", cr: "6 credits" },
+    { y: "Year 4 / Sem 2", cr: "10 credits" },
+  ];
+  // id, code, credits, name, col, row, category, status, grade
+  const N = [
+    ["107","2301107",3,"Calculus I",0,0,"core","pass","C"],
+    ["108g","2301108",3,"เลื่อนไปซัมเมอร์",1,0,"core","ghost"],
+    ["286","2301286",3,"Prob Stat",2,0,"core","now"],
+    ["234","2301234",3,"Linear Algebra",3,0,"core","next"],
+    ["108","2301108",3,"Calculus II",4,0,"core","warn"],
+    ["220","2301220",3,"Math Model",1,1,"core","pass","A"],
+    ["230","2301230",2,"Discrete CS",2,1,"core","now"],
+    ["379","2301379",3,"TC",5,1,"core"],
+    ["173","2301173",4,"Programming",0,2,"core","pass","A"],
+    ["260","2301260",4,"Prog Tech",1,2,"core","pass","A"],
+    ["265","2301265",4,"DSA",2,2,"core","now"],
+    ["266","2301266",3,"Elem Data Lit",3,2,"core","next"],
+    ["4121","2304121",3,"Physics",0,3,"sci","pass","C"],
+    ["375","2301375",3,"Database",3,3,"core","next"],
+    ["367","2301367",3,"SE",5,3,"core"],
+    ["360","2301360",3,"Info Sys Mgt",6,3,"core"],
+    ["4181","2304181",1,"Phys Lab",0,4,"sci","pass","B"],
+    ["180","2301180",2,"Explore CS",1,4,"core","pass","S"],
+    ["274","2301274",3,"Comp Sys",2,4,"core","now"],
+    ["275","2301275",3,"Comp Network",3,4,"core","next"],
+    ["371","2301371",3,"OS",5,4,"core"],
+    ["3107","2303107",3,"Gen Bio",0,5,"sci","pass","B"],
+    ["2161","2302161",3,"Gen Chem",1,5,"sci","pass","B"],
+    ["399","2301399",1,"Project Proposal",6,5,"core"],
+    ["3108","2303108",1,"Gen Bio Lab",0,6,"sci","pass","A"],
+    ["2113","2302113",1,"Gen Chem Lab",1,6,"sci","pass","B+"],
+    ["398","2300398",1,"Pre-CoOp Ed",6,6,"core"],
+    ["498","2301498",6,"CoOp Ed",7,6,"coop",null,null,2],
+    ["480","2301480",1,"Seminar CS",9,6,"core"],
+    ["e111","5500111",3,"Exp Eng I",0,7,"eng","pass","C+"],
+    ["e112","5500112",3,"Exp Eng II",1,7,"eng","pass","B"],
+    ["e204","5500204",3,"EAP I",3,7,"eng","next"],
+    ["e496","5500496",3,"Comm Sci Tech",6,7,"eng"],
+    ["f1","2309202",3,"Ornamental Fish",3,8,"free","next"],
+    ["g3",null,3,"Gen Ed III",5,8,"gen"],
+    ["el5",null,3,"Elective V",6,8,"elec"],
+    ["el8",null,3,"Elective VIII",9,8,"elec"],
+    ["g1","3200106",3,"GE · Oral Bio Hlth",2,9,"gen","now"],
+    ["el3",null,3,"Elective III",5,9,"elec"],
+    ["el6",null,3,"Elective VI",6,9,"elec"],
+    ["g2","0299006",3,"GE · Com Vision",2,10,"gen","now"],
+    ["el2","2301350",3,"UI Dsgn · Elec II",3,10,"elec","next"],
+    ["el4",null,3,"Elective IV",5,10,"elec"],
+    ["el7",null,3,"Elective VII",6,10,"elec"],
+    ["g5",null,3,"Gen Ed V",9,10,"gen"],
+    ["el1","2301251",3,"Req Eng · Elec I",2,11,"elec","now"],
+    ["f2",null,3,"Free II",5,11,"free"],
+    ["g4",null,3,"Gen Ed IV",6,11,"gen"],
+    ["g6",null,3,"Gen Ed VI",9,11,"gen"],
+  ];
+  // from, to, coreq?
+  const E = [
+    ["107","108"],["107","286"],["220","230"],["220","234",1],["286","266",1],["230","379"],
+    ["173","260"],["260","265"],["260","274"],["173","266"],["173","360"],["173","180"],["173","275"],
+    ["265","375"],["265","371"],["375","367"],["274","371"],
+    ["4121","4181",1],["3107","3108",1],["2161","2113",1],
+    ["398","498"],["e111","e112"],["e112","e204"],["e204","e496"],
+  ];
+
+  const PITCH = 158, W = 128, H = 50, RH = 68, X0 = 24, Y0 = 108;
+  const W_ALL = X0 * 2 + PITCH * (COLS.length - 1) + W, H_ALL = Y0 + RH * 12 + 28;
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.getElementById("chart");
+  svg.setAttribute("viewBox", `0 0 ${W_ALL} ${H_ALL}`);
+  svg.setAttribute("width", W_ALL); svg.setAttribute("height", H_ALL);
+  const el = (t, a, p) => { const e = document.createElementNS(ns, t); for (const k in a) e.setAttribute(k, a[k]); (p || svg).appendChild(e); return e; };
+
+  const defs = el("defs", {});
+  const mk = el("marker", { id: "ah", viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: "auto-start-reverse" }, defs);
+  el("path", { d: "M0 0 L10 5 L0 10 z", class: "arrowhead" }, mk);
+
+  // ตอนนี้ band
+  COLS.forEach((c, i) => {
+    const cx = X0 + i * PITCH + W / 2;
+    if (c.now) el("rect", { class: "band", x: X0 + i * PITCH - 12, y: 10, width: W + 24, height: H_ALL - 18, rx: 8 });
+    if (c.cr) el("text", { class: "hdr cr", x: cx, y: 40, "text-anchor": "middle" }).textContent = c.cr;
+    el("text", { class: "hdr" + (c.now ? " now" : ""), x: cx, y: 66, "text-anchor": "middle" }).textContent = c.y;
+    if (c.now) el("text", { class: "hdr now", x: cx, y: 86, "text-anchor": "middle" }).textContent = "◆ ตอนนี้";
+  });
+
+  const pos = {};
+  N.forEach(n => {
+    const [id, code, cr, name, col, row, cat, st, gr, span] = n;
+    const x = X0 + col * PITCH, y = Y0 + row * RH;
+    const w = span ? W + PITCH * (span - 1) : W;
+    pos[id] = { x, y, w, col, row, cx: x + w / 2, cy: y + H / 2, st };
+  });
+
+  const blocked = (row, c1, c2) => N.some(n => n[5] === row && n[4] > c1 && n[4] < c2);
+  const edgeEls = [];
+  const gxUse = {}, gyUse = {};
+  E.forEach(([f, t, co], i) => {
+    const a = pos[f], b = pos[t];
+    let d;
+    if (a.col === b.col) {
+      d = `M${a.cx} ${a.y + H} V${b.y}`;
+    } else if (a.row === b.row && !blocked(a.row, a.col, b.col)) {
+      d = `M${a.x + a.w} ${a.cy} H${b.x}`;
+    } else {
+      const gk = a.col; gxUse[gk] = (gxUse[gk] || 0) + 1;
+      const gx = a.x + a.w + 6 + (gxUse[gk] - 1) * 5;
+      if (b.row < a.row) {
+        const k = "b" + b.row; gyUse[k] = (gyUse[k] || 0) + 1;
+        const gy = b.y + H + 5 + (gyUse[k] - 1) * 4;
+        d = `M${a.x + a.w} ${a.cy} H${gx} V${gy} H${b.cx} V${b.y + H}`;
+      } else {
+        const k = "t" + b.row; gyUse[k] = (gyUse[k] || 0) + 1;
+        const gy = b.y - 5 - (gyUse[k] - 1) * 4;
+        d = `M${a.x + a.w} ${a.cy} H${gx} V${gy} H${b.cx} V${b.y}`;
+      }
+    }
+    const p = el("path", { d, class: "edge" + (co ? " co" : ""), "marker-end": "url(#ah)" });
+    p.dataset.f = f; p.dataset.t = t; edgeEls.push(p);
+  });
+
+  const nodeEls = {};
+  N.forEach(n => {
+    const [id, code, cr, name, , , cat, st, gr] = n;
+    const p = pos[id];
+    const g = el("g", { class: "node", tabindex: 0 });
+    g.dataset.id = id;
+    const ghost = st === "ghost";
+    const r = el("rect", { class: "box", x: p.x, y: p.y, width: p.w, height: H, rx: 3,
+      fill: ghost ? "none" : `var(--${cat})`, stroke: ghost ? "var(--muted)" : `var(--${cat}-s)` }, g);
+    if (ghost) r.setAttribute("stroke-dasharray", "4 4");
+    if (st === "now") { r.setAttribute("stroke", "var(--now)"); r.setAttribute("stroke-width", 3); }
+    if (st === "plan?" || st === "next") { r.setAttribute("stroke", "var(--now)"); r.setAttribute("stroke-width", 2); r.setAttribute("stroke-dasharray", "6 4"); }
+    if (st === "warn") { r.setAttribute("stroke", "var(--warn)"); r.setAttribute("stroke-width", 3); }
+    const line1 = code ? `${code} (${cr})` : `${name} (${cr})`;
+    const t = el("text", { x: p.cx, y: code ? p.y + 21 : p.cy + 5, "text-anchor": "middle" }, g);
+    if (ghost) t.setAttribute("fill", "var(--muted)");
+    const s1 = el("tspan", { class: code ? "code" : "" }, t); s1.textContent = line1;
+    if (code) { const s2 = el("tspan", { x: p.cx, dy: 18 }, t); s2.textContent = name; if (ghost) s2.setAttribute("font-size", 12); }
+    let badge = null, bc = null;
+    if (st === "pass") { badge = "✓ " + gr; bc = "var(--pass)"; }
+    if (st === "warn") { badge = "ค้าง"; bc = "var(--warn)"; }
+    if (st === "now") { badge = "เรียนอยู่"; bc = "var(--now)"; }
+    if (st === "next") { badge = "2569/2"; bc = "var(--now)"; }
+    if (badge) {
+      const bw = badge.length * 7 + 14;
+      const bg = el("g", { class: "badge" }, g);
+      el("rect", { x: p.x + p.w - bw + 6, y: p.y - 9, width: bw, height: 18, rx: 9, fill: bc }, bg);
+      el("text", { x: p.x + p.w - bw / 2 + 6, y: p.y + 4, "text-anchor": "middle" }, bg).textContent = badge;
+    }
+    if (id === "498") el("text", { x: p.cx, y: p.y + H + 20, "text-anchor": "middle", class: "hdr cr" }).textContent = "ลงทะเบียนปี 4 เทอม 1";
+    nodeEls[id] = g;
+  });
+
+  // legend block in corner (เหมือนผังต้นฉบับ)
+  el("text", { class: "hdr", x: X0 + 8 * PITCH + W / 2, y: Y0 + 30, "text-anchor": "middle" }).textContent = "Total 136 credits";
+  el("text", { class: "hdr", x: X0 + 8 * PITCH + W / 2, y: Y0 + 80, "text-anchor": "middle", "font-size": 18 }).textContent = "Single major / CoOpEd";
+
+  // hover: แสดงสายก่อนหน้าและถัดไป
+  const up = {}, down = {};
+  E.forEach(([f, t]) => { (down[f] = down[f] || []).push(t); (up[t] = up[t] || []).push(f); });
+  function walk(id, map, set) { (map[id] || []).forEach(x => { if (!set.has(x)) { set.add(x); walk(x, map, set); } }); }
+  function on(id) {
+    const s = new Set([id]); walk(id, up, s); walk(id, down, s);
+    svg.classList.add("dim");
+    Object.entries(nodeEls).forEach(([k, g]) => g.classList.toggle("hl", s.has(k)));
+    edgeEls.forEach(p => p.classList.toggle("hl", s.has(p.dataset.f) && s.has(p.dataset.t)));
+  }
+  function off() { svg.classList.remove("dim"); }
+  Object.entries(nodeEls).forEach(([k, g]) => {
+    g.addEventListener("mouseenter", () => on(k)); g.addEventListener("mouseleave", off);
+    g.addEventListener("focus", () => on(k)); g.addEventListener("blur", off);
+    g.addEventListener("click", (e) => { e.stopPropagation(); on(k); });
+  });
+  svg.addEventListener("click", off);
+})();
+</script>
